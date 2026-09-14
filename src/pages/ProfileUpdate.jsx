@@ -11,7 +11,7 @@ export default function ProfileUpdate() {
     designation: currentUser?.designation || '',
     department: currentUser?.department || '',
     biometricId: currentUser?.biometricId || '',
-    avatarBg: currentUser?.avatarBg || 'bg-indigo-100 text-indigo-700'
+    avatarBg: currentUser?.avatarBg || 'indigo'
   });
 
   const [saved, setSaved] = useState(false);
@@ -25,12 +25,11 @@ export default function ProfileUpdate() {
         designation: currentUser.designation || '',
         department: currentUser.department || '',
         biometricId: currentUser.biometricId || '',
-        avatarBg: currentUser.avatarBg || 'bg-indigo-100 text-indigo-700'
+        avatarBg: currentUser.avatarBg || 'indigo'
       });
     }
   }, [currentUser]);
 
-  // Compute live initials as the user types
   const computeInitials = (nameStr) => {
     if (!nameStr) return '??';
     const parts = nameStr.trim().split(/\s+/);
@@ -53,7 +52,7 @@ export default function ProfileUpdate() {
   };
 
   return (
-    <div style={{ maxWidth: '850px', margin: '0 auto', padding: '32px 24px' }}>
+    <div style={{ maxWidth: '850px', margin: '0 auto', padding: '24px 16px' }}>
       <div style={{ marginBottom: '24px' }}>
         <h1 style={{ fontSize: '20px', fontWeight: 700, color: '#0F172A', margin: 0 }}>
           User Profile Settings
@@ -88,8 +87,8 @@ export default function ProfileUpdate() {
             width: '64px',
             height: '64px',
             borderRadius: '50%',
-            backgroundColor: formData.avatarBg?.includes('purple') ? '#FAF5FF' : '#EEF2FF',
-            color: formData.avatarBg?.includes('purple') ? '#7E22CE' : '#4F46E5',
+            backgroundColor: formData.avatarBg === 'purple' ? '#FAF5FF' : '#EEF2FF',
+            color: formData.avatarBg === 'purple' ? '#7E22CE' : '#4F46E5',
             border: '2px solid #CBD5E1',
             display: 'flex',
             alignItems: 'center',
@@ -127,8 +126,7 @@ export default function ProfileUpdate() {
 
         {/* Edit Form */}
         <form onSubmit={handleSubmit} style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '18px' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-            
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px' }}>
             <div>
               <label style={{ display: 'block', fontSize: '11px', fontWeight: 600, color: '#334155', marginBottom: '6px' }}>
                 Full Legal Name *
@@ -202,7 +200,6 @@ export default function ProfileUpdate() {
                 style={{ width: '100%', boxSizing: 'border-box', padding: '9px 12px', backgroundColor: '#F1F5F9', border: '1px solid #E2E8F0', borderRadius: '8px', fontSize: '12px', color: '#64748B', cursor: 'not-allowed' }}
               />
             </div>
-
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: '16px', borderTop: '1px solid #F1F5F9' }}>

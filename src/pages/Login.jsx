@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import Logo from '../components/Logo';
+import { useIsMobile } from '../hooks/useMediaQuery';
 
 export default function Login() {
   const { login } = useAuth();
+  const isMobile = useIsMobile(860);
+
   const [email, setEmail] = useState('arpit.singla@company.com');
   const [password, setPassword] = useState('password123');
   const [showPassword, setShowPassword] = useState(false);
 
-  // State for Account Activation Modal
+  // Activation Request Modal State
   const [showActivationModal, setShowActivationModal] = useState(false);
   const [activationData, setActivationData] = useState({
     empId: '',
@@ -42,7 +45,7 @@ export default function Login() {
         customDepartment: ''
       });
       alert('Activation request submitted! Your reporting director will verify and activate your account.');
-    }, 1800);
+    }, 1600);
   };
 
   return (
@@ -56,28 +59,31 @@ export default function Login() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '0 32px'
+        padding: isMobile ? '0 16px' : '0 32px'
       }}>
         <Logo subtitle="Leave & Attendance System" />
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', fontSize: '12px', color: '#64748B', fontWeight: 500 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#10B981' }}></span>
-            <span style={{ color: '#334155' }}>SSO Active</span>
+        {!isMobile && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', fontSize: '12px', color: '#64748B', fontWeight: 500 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#10B981' }}></span>
+              <span style={{ color: '#334155' }}>SSO Active</span>
+            </div>
+            <span style={{ color: '#CBD5E1' }}>|</span>
+            <span style={{ cursor: 'pointer' }}>Helpdesk Support</span>
           </div>
-          <span style={{ color: '#CBD5E1' }}>|</span>
-          <span style={{ cursor: 'pointer' }}>Helpdesk Support</span>
-        </div>
+        )}
       </header>
 
-      {/* Main Body Split */}
-      <div style={{ display: 'flex', flex: 1, minHeight: 'calc(100vh - 64px)' }}>
+      {/* Main Responsive Body Split */}
+      <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', flex: 1 }}>
         
-        {/* Left Slate Column */}
+        {/* Left Informational Panel */}
         <div style={{
-          flex: '1.2',
+          flex: isMobile ? 'none' : '1.2',
           backgroundColor: '#F3F6FA',
-          borderRight: '1px solid #E2E8F0',
-          padding: '60px 72px',
+          borderRight: isMobile ? 'none' : '1px solid #E2E8F0',
+          borderBottom: isMobile ? '1px solid #E2E8F0' : 'none',
+          padding: isMobile ? '32px 20px' : '60px 72px',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between'
@@ -99,7 +105,7 @@ export default function Login() {
             </span>
 
             <h1 style={{
-              fontSize: '32px',
+              fontSize: isMobile ? '24px' : '32px',
               fontWeight: 800,
               color: '#0F172A',
               lineHeight: 1.25,
@@ -118,10 +124,8 @@ export default function Login() {
               Clock in with one click, submit time-off requests, and monitor your personal leaves and overtime balances in real-time.
             </p>
 
-            {/* Feature Cards with clean SVG line icons */}
-            <div style={{ marginTop: '48px', display: 'flex', flexDirection: 'column', gap: '14px', maxWidth: '420px' }}>
-              
-              {/* Card 1: Shift Tracking */}
+            {/* Feature Cards */}
+            <div style={{ marginTop: isMobile ? '28px' : '48px', display: 'flex', flexDirection: 'column', gap: '14px', maxWidth: '420px' }}>
               <div style={{
                 backgroundColor: '#FFFFFF',
                 border: '1px solid #E2E8F0',
@@ -158,7 +162,6 @@ export default function Login() {
                 </div>
               </div>
 
-              {/* Card 2: Quota Balancing */}
               <div style={{
                 backgroundColor: '#FFFFFF',
                 border: '1px solid #E2E8F0',
@@ -194,33 +197,32 @@ export default function Login() {
                   </p>
                 </div>
               </div>
-
             </div>
           </div>
 
-          <p style={{ fontSize: '11px', color: '#94A3B8', marginTop: '40px' }}>
-            Version 2.4.0 • Privacy &amp; Security Compliance
-          </p>
+          {!isMobile && (
+            <p style={{ fontSize: '11px', color: '#94A3B8', marginTop: '40px' }}>
+              Version 2.4.0 • Privacy &amp; Security Compliance
+            </p>
+          )}
         </div>
 
-        {/* Right Sign-in Form */}
+        {/* Right Form Panel */}
         <div style={{
-          flex: '0.8',
+          flex: isMobile ? 'none' : '0.8',
           backgroundColor: '#FFFFFF',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '40px 60px'
+          padding: isMobile ? '36px 20px' : '40px 60px'
         }}>
           <div style={{ width: '100%', maxWidth: '360px' }}>
-            
             <h2 style={{ fontSize: '24px', fontWeight: 700, color: '#0F172A', margin: 0 }}>Welcome Back</h2>
             <p style={{ fontSize: '12px', color: '#64748B', marginTop: '4px', marginBottom: '24px' }}>
               Sign in to access your attendance and leave account.
             </p>
 
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              
               <div>
                 <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#334155', marginBottom: '6px' }}>
                   Work Email / Employee ID
@@ -251,21 +253,19 @@ export default function Login() {
                 </div>
               </div>
 
+              {/* Password with Eye Visibility Toggle */}
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
                   <label style={{ fontSize: '12px', fontWeight: 600, color: '#334155' }}>Password</label>
                   <span style={{ fontSize: '11px', color: '#64748B', cursor: 'pointer' }}>Forgot?</span>
                 </div>
                 <div style={{ position: 'relative' }}>
-                  {/* Lock icon */}
                   <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94A3B8' }}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                       <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                     </svg>
                   </span>
-
-                  {/* Dynamic Password Input */}
                   <input
                     type={showPassword ? "text" : "password"}
                     value={password}
@@ -282,8 +282,6 @@ export default function Login() {
                       outline: 'none'
                     }}
                   />
-
-                  {/* Toggle Eye Button */}
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
@@ -310,7 +308,7 @@ export default function Login() {
                       </svg>
                     ) : (
                       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"></path>
                         <circle cx="12" cy="12" r="3"></circle>
                       </svg>
                     )}
@@ -376,7 +374,6 @@ export default function Login() {
                   Quick: Manager
                 </button>
               </div>
-
             </form>
 
             <div style={{ display: 'flex', alignItems: 'center', margin: '20px 0', color: '#E2E8F0' }}>
@@ -406,7 +403,6 @@ export default function Login() {
               >
                 <span style={{ color: '#EA4335', fontWeight: 700 }}>G</span> Google
               </button>
-
               <button
                 type="button"
                 onClick={() => login('manager')}
@@ -429,7 +425,6 @@ export default function Login() {
               </button>
             </div>
 
-            {/* Request Account Activation Trigger */}
             <p style={{ textAlign: 'center', fontSize: '11px', color: '#64748B', marginTop: '22px' }}>
               New team member?{' '}
               <span
@@ -439,10 +434,8 @@ export default function Login() {
                 Request account activation
               </span>
             </p>
-
           </div>
         </div>
-
       </div>
 
       {/* POPUP MODAL: Account Activation Request */}
@@ -485,7 +478,7 @@ export default function Login() {
             {activationSubmitted ? (
               <div style={{ padding: '24px', textAlign: 'center', backgroundColor: '#ECFDF5', borderRadius: '12px', border: '1px solid #A7F3D0' }}>
                 <div style={{ fontSize: '28px', color: '#059669', marginBottom: '8px' }}>✓</div>
-                <h4  style={{ fontSize: '14px', fontWeight: 700, color: '#065F46', margin: 0 }}>Request Dispatched</h4>
+                <h4 style={{ fontSize: '14px', fontWeight: 700, color: '#065F46', margin: 0 }}>Request Dispatched</h4>
                 <p style={{ fontSize: '11px', color: '#047857', marginTop: '6px' }}>
                   Your details have been mapped to your reporting director's provisioning queue.
                 </p>
@@ -552,7 +545,7 @@ export default function Login() {
                     <option value="Other">Other...</option>
                   </select>
 
-                  {/* Appears dynamically only if "Other" is chosen */}
+                 
                   {activationData.department === 'Other' && (
                     <input
                       type="text"

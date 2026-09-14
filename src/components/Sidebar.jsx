@@ -41,30 +41,25 @@ export default function Sidebar({ currentTab, setCurrentTab }) {
       flexDirection: 'column',
       justifyContent: 'space-between',
       flexShrink: 0,
-      minHeight: 'calc(100vh - 64px)'
+      height: '100%',
+      minHeight: 'calc(100vh - 64px)',
+      boxSizing: 'border-box'
     }}>
       <div>
         <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.06em', color: '#94A3B8', textTransform: 'uppercase', marginBottom: '10px', padding: '0 8px' }}>
           {isManager ? 'MANAGEMENT PORTAL' : 'MAIN NAVIGATION'}
         </p>
 
-        {/* Employee Navigation */}
-        {!isManager && (
+        {!isManager ? (
           <nav style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            <button
-              onClick={() => setCurrentTab('dashboard')}
-              style={btnStyle(currentTab === 'dashboard')}
-            >
+            <button onClick={() => setCurrentTab('dashboard')} style={btnStyle(currentTab === 'dashboard')}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <DashboardIcon size={18} color={currentTab === 'dashboard' ? '#4F46E5' : '#64748B'} />
                 <span>Dashboard Overview</span>
               </div>
             </button>
 
-            <button
-              onClick={() => setCurrentTab('attendance')}
-              style={btnStyle(currentTab === 'attendance')}
-            >
+            <button onClick={() => setCurrentTab('attendance')} style={btnStyle(currentTab === 'attendance')}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <ClockIcon size={18} color={currentTab === 'attendance' ? '#4F46E5' : '#64748B'} />
                 <span>Attendance Log</span>
@@ -74,10 +69,7 @@ export default function Sidebar({ currentTab, setCurrentTab }) {
               </span>
             </button>
 
-            <button
-              onClick={() => setCurrentTab('apply-leave')}
-              style={btnStyle(currentTab === 'apply-leave' || currentTab === 'leaves')}
-            >
+            <button onClick={() => setCurrentTab('apply-leave')} style={btnStyle(currentTab === 'apply-leave' || currentTab === 'leaves')}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <ClipboardIcon size={18} color={(currentTab === 'apply-leave' || currentTab === 'leaves') ? '#4F46E5' : '#64748B'} />
                 <span>Apply for Leave</span>
@@ -87,38 +79,26 @@ export default function Sidebar({ currentTab, setCurrentTab }) {
               </span>
             </button>
 
-            <button
-              onClick={() => setCurrentTab('profile')}
-              style={btnStyle(currentTab === 'profile')}
-            >
+            <button onClick={() => setCurrentTab('profile')} style={btnStyle(currentTab === 'profile')}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <UserIcon size={18} color={currentTab === 'profile' ? '#4F46E5' : '#64748B'} />
                 <span>My Profile</span>
               </div>
             </button>
           </nav>
-        )}
-
-        {/* Manager Navigation */}
-        {isManager && (
+        ) : (
           <nav style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            <button
-              onClick={() => setCurrentTab('manager-dashboard')}
-              style={btnStyle(currentTab === 'manager-dashboard')}
-            >
+            <button onClick={() => setCurrentTab('manager-dashboard')} style={btnStyle(currentTab === 'manager-dashboard')}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <DashboardIcon size={18} color={currentTab === 'manager-dashboard' ? '#4F46E5' : '#64748B'} />
                 <span>Manager Dashboard</span>
               </div>
-              <span style={{ fontSize: '10px', backgroundColor: '#EEF2FF', color: '#4F46E5', padding: '2px 6px', borderRadius: '4px', border: '1px solid #E0E7FF' }}>
+              <span style={{ fontSize: '10px', backgroundColor: '#EEF2FF', color: '#4F46E5', padding: '2px 6px', borderRadius: '4px' }}>
                 Live
               </span>
             </button>
 
-            <button
-              onClick={() => setCurrentTab('team-approvals')}
-              style={btnStyle(currentTab === 'team-approvals')}
-            >
+            <button onClick={() => setCurrentTab('team-approvals')} style={btnStyle(currentTab === 'team-approvals')}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <CheckSquareIcon size={18} color={currentTab === 'team-approvals' ? '#4F46E5' : '#64748B'} />
                 <span>Team Approvals</span>
@@ -128,10 +108,7 @@ export default function Sidebar({ currentTab, setCurrentTab }) {
               </span>
             </button>
 
-            <button
-              onClick={() => setCurrentTab('employee-admin')}
-              style={btnStyle(currentTab === 'employee-admin')}
-            >
+            <button onClick={() => setCurrentTab('employee-admin')} style={btnStyle(currentTab === 'employee-admin')}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <UsersIcon size={18} color={currentTab === 'employee-admin' ? '#4F46E5' : '#64748B'} />
                 <span>Employee Admin</span>
@@ -141,10 +118,7 @@ export default function Sidebar({ currentTab, setCurrentTab }) {
               </span>
             </button>
 
-            <button
-              onClick={() => setCurrentTab('profile')}
-              style={btnStyle(currentTab === 'profile')}
-            >
+            <button onClick={() => setCurrentTab('profile')} style={btnStyle(currentTab === 'profile')}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <UserIcon size={18} color={currentTab === 'profile' ? '#4F46E5' : '#64748B'} />
                 <span>My Profile</span>
@@ -153,7 +127,7 @@ export default function Sidebar({ currentTab, setCurrentTab }) {
           </nav>
         )}
 
-        {/* Approval Route Box (Visible when on Apply for Leave) */}
+        {/* Dynamic Approval Route Card */}
         {!isManager && (currentTab === 'apply-leave' || currentTab === 'leaves') && (
           <div style={{ marginTop: '24px' }}>
             <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.06em', color: '#94A3B8', textTransform: 'uppercase', marginBottom: '8px' }}>
@@ -176,8 +150,8 @@ export default function Sidebar({ currentTab, setCurrentTab }) {
           </div>
         )}
 
-        {/* Quota Progress (Visible on Dashboard) */}
-        {!isManager && currentTab === 'dashboard' && (
+        {/* Quota Balances */}
+        {!isManager && currentTab !== 'apply-leave' && currentTab !== 'leaves' && (
           <div style={{ marginTop: '32px' }}>
             <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.06em', color: '#94A3B8', textTransform: 'uppercase', marginBottom: '12px' }}>
               AVAILABLE QUOTA
@@ -205,28 +179,9 @@ export default function Sidebar({ currentTab, setCurrentTab }) {
             </div>
           </div>
         )}
-
-        {/* Manager Team Capacity */}
-        {isManager && (
-          <div style={{ marginTop: '32px' }}>
-            <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.06em', color: '#94A3B8', textTransform: 'uppercase', marginBottom: '12px' }}>
-              TEAM CAPACITY
-            </p>
-            <div style={{ padding: '14px', backgroundColor: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: '14px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', fontWeight: 600, marginBottom: '6px' }}>
-                <span style={{ color: '#475569' }}>Tech Team Floor</span>
-                <span style={{ color: '#10B981', fontWeight: 700 }}>45/48 (94%)</span>
-              </div>
-              <div style={{ width: '100%', height: '6px', backgroundColor: '#E2E8F0', borderRadius: '9999px', overflow: 'hidden' }}>
-                <div style={{ width: '94%', height: '100%', backgroundColor: '#10B981', borderRadius: '9999px' }}></div>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
 
-      {/* Bottom Guideline & Sign Out */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', paddingTop: '16px' }}>
+      <div style={{ paddingTop: '16px' }}>
         <button
           onClick={logout}
           style={{

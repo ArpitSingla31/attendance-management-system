@@ -12,7 +12,7 @@ export const mockUsers = {
     branch: 'Panchkula Branch',
     email: 'arpit.singla@company.com',
     initials: 'AS',
-    avatarBg: 'bg-indigo-100 text-indigo-700',
+    avatarBg: 'indigo',
     biometricId: 'BIO-88319',
     phone: '+91 98765 43210'
   },
@@ -25,7 +25,7 @@ export const mockUsers = {
     branch: 'Engineering & Tech Ops',
     email: 'harsh.suri@company.com',
     initials: 'HS',
-    avatarBg: 'bg-purple-100 text-purple-700',
+    avatarBg: 'purple',
     biometricId: 'BIO-11024',
     phone: '+91 98123 45678'
   }
@@ -42,7 +42,6 @@ export const AuthProvider = ({ children }) => {
   const logout = () => setCurrentUser(null);
 
   const updateProfile = (updatedData) => {
-    // Generate initials dynamically based on the updated name
     let newInitials = updatedData.initials;
     if (updatedData.name) {
       const parts = updatedData.name.trim().split(/\s+/);
@@ -56,7 +55,7 @@ export const AuthProvider = ({ children }) => {
     setCurrentUser((prev) => ({
       ...prev,
       ...updatedData,
-      initials: newInitials || prev.initials
+      initials: newInitials || prev?.initials || 'AS'
     }));
   };
 
