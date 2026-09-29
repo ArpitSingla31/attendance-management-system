@@ -17,7 +17,7 @@ export default function Logo({ isPro = false, subtitle = "Leave & Attendance Sys
       }}>
         <BrandIcon size={20} color="#FFFFFF" />
       </div>
-      <div>
+      <div className="brand-copy">
         <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
           <span style={{ fontWeight: 800, color: '#0F172A', fontSize: '15px', letterSpacing: '-0.02em' }}>
             StaffSync

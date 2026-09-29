@@ -1,16 +1,28 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { useIsMobile } from './hooks/useMediaQuery';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import Login from './pages/Login';
 import ProfileUpdate from './pages/ProfileUpdate';
+import AdminUsers from './pages/AdminUsers';
+import LeaveCenter from './pages/LeaveCenter';
+import HolidayCalendar from './pages/HolidayCalendar';
+import ManagerDashboard from './pages/ManagerDashboard';
+import AttendanceCenter from './pages/AttendanceCenter';
+import EmployeeDashboard from './pages/EmployeeDashboard';
+import Settings from './pages/Settings';
 
 function MainApp() {
-  const { currentUser } = useAuth();
+  const { currentUser, authReady } = useAuth();
   const isMobile = useIsMobile(768);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentTab, setCurrentTab] = useState('dashboard');
+
+  useEffect(() => {
+    if (!currentUser) return;
+    setCurrentTab(currentUser.role === 'Employee' ? 'dashboard' : 'manager-dashboard');
+  }, [currentUser?.id, currentUser?.role]);
 
   // Modal State for Provisioning New Staff
   const [showAddMemberModal, setShowAddMemberModal] = useState(false);
@@ -69,11 +81,15 @@ function MainApp() {
     }, 250);
   };
 
+  if (!authReady) {
+    return <div role="status" style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', color: '#64748B', fontSize: '14px' }}>Restoring your secure session…</div>;
+  }
+
   if (!currentUser) {
     return <Login />;
   }
 
-  const isManager = currentUser.role === 'Manager';
+  const isManager = currentUser.role !== 'Employee';
 
   const handleTabSelect = (tab) => {
     setCurrentTab(tab);
@@ -85,6 +101,21 @@ function MainApp() {
     if (currentTab === 'profile') {
       return <ProfileUpdate />;
     }
+    if (currentTab === 'settings') return <Settings onNavigate={handleTabSelect} />;
+    if (currentTab === 'access-admin' && ['Organization Admin', 'Application Admin'].includes(currentUser.role)) {
+      return <AdminUsers />;
+    }
+    if (currentTab === 'holiday-calendar') return <HolidayCalendar />;
+    if (currentTab === 'attendance') return <AttendanceCenter />;
+    if (currentTab === 'overtime') return <AttendanceCenter mode="overtime" />;
+    if (currentTab === 'reports') return <AttendanceCenter mode="reports" />;
+    if (currentTab === 'shifts' && currentUser.role === 'Manager') return <ManagerDashboard onNavigate={handleTabSelect} />;
+    if (currentTab === 'shifts' && currentUser.role === 'Employee') return <AttendanceCenter />;
+    if (currentTab === 'employees' && currentUser.role === 'Manager') return <ManagerDashboard onNavigate={handleTabSelect} />;
+    if (currentTab === 'dashboard' && currentUser.role === 'Employee') return <EmployeeDashboard onNavigate={handleTabSelect} />;
+    if (['apply-leave', 'leaves'].includes(currentTab)) return <LeaveCenter />;
+    if (currentTab === 'team-approvals') return <LeaveCenter mode="manager" />;
+    if (isManager && currentTab === 'manager-dashboard') return <ManagerDashboard onNavigate={handleTabSelect} />;
 
     // Manager Console Screens
     if (isManager) {
@@ -605,7 +636,7 @@ function MainApp() {
             <h1 style={{ fontSize: '20px', fontWeight: 800, color: '#0F172A', margin: 0 }}>Apply for Time-Off</h1>
             <p style={{ fontSize: '12px', color: '#64748B', marginTop: '4px', marginBottom: '20px' }}>Submit planned absence requests for managerial sign-off.</p>
             <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '24px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
-              <form onSubmit={(e) => { e.preventDefault(); alert('Leave request submitted to Harsh Suri!'); handleTabSelect('dashboard'); }} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <form onSubmit={(e) => { e.preventDefault(); alert('Request sent'); handleTabSelect('dashboard'); }} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '11px', fontWeight: 600, color: '#334155', marginBottom: '6px' }}>Leave Category *</label>
                   <select style={{ width: '100%', boxSizing: 'border-box', padding: '10px 12px', backgroundColor: '#F8FAFC', border: '1px solid #CBD5E1', borderRadius: '8px', fontSize: '12px', outline: 'none' }}>
@@ -668,10 +699,13 @@ function MainApp() {
 
         {/* Sidebar */}
         <div style={{
-          position: isMobile ? 'fixed' : 'static',
-          top: 0,
+          position: isMobile ? 'fixed' : 'sticky',
+          top: isMobile ? 0 : 64,
           left: 0,
           bottom: 0,
+          height: isMobile ? '100vh' : 'calc(100vh - 64px)',
+          alignSelf: 'flex-start',
+          flexShrink: 0,
           zIndex: isMobile ? 50 : 'auto',
           transform: isMobile && !mobileMenuOpen ? 'translateX(-100%)' : 'translateX(0)',
           transition: 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1)',

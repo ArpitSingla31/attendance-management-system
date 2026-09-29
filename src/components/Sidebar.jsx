@@ -12,31 +12,33 @@ import {
 
 export default function Sidebar({ currentTab, setCurrentTab }) {
   const { currentUser, logout } = useAuth();
-  const isManager = currentUser?.role === 'Manager';
+  const isManager = currentUser?.role !== 'Employee';
+  const isAdmin = ['Organization Admin', 'Application Admin'].includes(currentUser?.role);
 
   const btnStyle = (isActive) => ({
     width: '100%',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: '8px 12px',
-    borderRadius: '10px',
+    padding: '8px 10px',
+    minHeight: '38px',
+    borderRadius: '9px',
     fontSize: '12px',
     fontWeight: isActive ? 600 : 500,
     color: isActive ? '#4F46E5' : '#475569',
-    backgroundColor: isActive ? '#EEF2FF' : 'transparent',
-    border: 'none',
+    background: isActive ? 'linear-gradient(100deg, #EEF2FF 0%, #F5F7FF 100%)' : 'transparent',
+    border: isActive ? '1px solid #DDE3FF' : '1px solid transparent',
     cursor: 'pointer',
     textAlign: 'left',
     transition: 'all 0.15s ease'
   });
 
   return (
-    <aside style={{
-      width: '240px',
-      backgroundColor: '#FFFFFF',
+    <aside className="app-sidebar" style={{
+      width: '252px',
+      background: 'linear-gradient(180deg, #FFFFFF 0%, #F9FAFF 100%)',
       borderRight: '1px solid #E2E8F0',
-      padding: '16px',
+      padding: '18px 14px 14px',
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'space-between',
@@ -45,13 +47,13 @@ export default function Sidebar({ currentTab, setCurrentTab }) {
       minHeight: 'calc(100vh - 64px)',
       boxSizing: 'border-box'
     }}>
-      <div>
-        <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.06em', color: '#94A3B8', textTransform: 'uppercase', marginBottom: '10px', padding: '0 8px' }}>
-          {isManager ? 'MANAGEMENT PORTAL' : 'MAIN NAVIGATION'}
+      <div className="sidebar-scroll-area">
+        <p className="sidebar-section-heading">
+          {isManager ? `${currentUser?.role?.toUpperCase()} PORTAL` : 'MAIN NAVIGATION'}
         </p>
 
         {!isManager ? (
-          <nav style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+          <nav className="sidebar-nav" style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
             <button onClick={() => setCurrentTab('dashboard')} style={btnStyle(currentTab === 'dashboard')}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <DashboardIcon size={18} color={currentTab === 'dashboard' ? '#4F46E5' : '#64748B'} />
@@ -62,11 +64,16 @@ export default function Sidebar({ currentTab, setCurrentTab }) {
             <button onClick={() => setCurrentTab('attendance')} style={btnStyle(currentTab === 'attendance')}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <ClockIcon size={18} color={currentTab === 'attendance' ? '#4F46E5' : '#64748B'} />
-                <span>Attendance Log</span>
+                <span>Attendance &amp; Schedule</span>
               </div>
-              <span style={{ fontSize: '10px', backgroundColor: '#F1F5F9', color: '#475569', padding: '2px 6px', borderRadius: '4px', border: '1px solid #E2E8F0' }}>
-                Daily
-              </span>
+            </button>
+
+            <button onClick={() => setCurrentTab('overtime')} style={btnStyle(currentTab === 'overtime')}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}><ClockIcon size={18} color={currentTab === 'overtime' ? '#4F46E5' : '#64748B'} /><span>Overtime</span></div>
+            </button>
+
+            <button onClick={() => setCurrentTab('reports')} style={btnStyle(currentTab === 'reports')}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}><DashboardIcon size={18} color={currentTab === 'reports' ? '#4F46E5' : '#64748B'} /><span>Reports</span></div>
             </button>
 
             <button onClick={() => setCurrentTab('apply-leave')} style={btnStyle(currentTab === 'apply-leave' || currentTab === 'leaves')}>
@@ -74,28 +81,26 @@ export default function Sidebar({ currentTab, setCurrentTab }) {
                 <ClipboardIcon size={18} color={(currentTab === 'apply-leave' || currentTab === 'leaves') ? '#4F46E5' : '#64748B'} />
                 <span>Apply for Leave</span>
               </div>
-              <span style={{ fontSize: '10px', backgroundColor: '#EEF2FF', color: '#4F46E5', padding: '2px 8px', borderRadius: '9999px', fontWeight: 700 }}>
-                New
-              </span>
             </button>
 
-            <button onClick={() => setCurrentTab('profile')} style={btnStyle(currentTab === 'profile')}>
+            <button onClick={() => setCurrentTab('holiday-calendar')} style={btnStyle(currentTab === 'holiday-calendar')}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}><ClipboardIcon size={18} color={currentTab === 'holiday-calendar' ? '#4F46E5' : '#64748B'} /><span>Holiday Calendar</span></div>
+            </button>
+
+            <button onClick={() => setCurrentTab('settings')} style={btnStyle(currentTab === 'settings')}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <UserIcon size={18} color={currentTab === 'profile' ? '#4F46E5' : '#64748B'} />
-                <span>My Profile</span>
+                <UserIcon size={18} color={currentTab === 'settings' ? '#4F46E5' : '#64748B'} />
+                <span>Settings</span>
               </div>
             </button>
           </nav>
         ) : (
-          <nav style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+          <nav className="sidebar-nav" style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
             <button onClick={() => setCurrentTab('manager-dashboard')} style={btnStyle(currentTab === 'manager-dashboard')}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <DashboardIcon size={18} color={currentTab === 'manager-dashboard' ? '#4F46E5' : '#64748B'} />
-                <span>Manager Dashboard</span>
+                <span>{isAdmin ? 'Admin Dashboard' : 'Manager Dashboard'}</span>
               </div>
-              <span style={{ fontSize: '10px', backgroundColor: '#EEF2FF', color: '#4F46E5', padding: '2px 6px', borderRadius: '4px' }}>
-                Live
-              </span>
             </button>
 
             <button onClick={() => setCurrentTab('team-approvals')} style={btnStyle(currentTab === 'team-approvals')}>
@@ -103,85 +108,47 @@ export default function Sidebar({ currentTab, setCurrentTab }) {
                 <CheckSquareIcon size={18} color={currentTab === 'team-approvals' ? '#4F46E5' : '#64748B'} />
                 <span>Team Approvals</span>
               </div>
-              <span style={{ fontSize: '10px', backgroundColor: '#FEF3C7', color: '#D97706', padding: '2px 8px', borderRadius: '9999px', fontWeight: 700 }}>
-                2 New
-              </span>
             </button>
 
-            <button onClick={() => setCurrentTab('employee-admin')} style={btnStyle(currentTab === 'employee-admin')}>
+            <button onClick={() => setCurrentTab('attendance')} style={btnStyle(currentTab === 'attendance')}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}><ClockIcon size={18} color={currentTab === 'attendance' ? '#4F46E5' : '#64748B'} /><span>Attendance</span></div>
+            </button>
+
+            {currentUser?.role === 'Manager' && <button onClick={() => setCurrentTab('shifts')} style={btnStyle(currentTab === 'shifts')}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}><ClockIcon size={18} color={currentTab === 'shifts' ? '#4F46E5' : '#64748B'} /><span>Team &amp; Shift Roster</span></div>
+            </button>}
+
+            {isAdmin && <button onClick={() => setCurrentTab('access-admin')} style={btnStyle(currentTab === 'access-admin')}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <UsersIcon size={18} color={currentTab === 'employee-admin' ? '#4F46E5' : '#64748B'} />
-                <span>Employee Admin</span>
+                <UsersIcon size={18} color={currentTab === 'access-admin' ? '#4F46E5' : '#64748B'} />
+                <span>Staff &amp; access</span>
               </div>
-              <span style={{ fontSize: '10px', backgroundColor: '#F1F5F9', color: '#475569', padding: '2px 6px', borderRadius: '4px' }}>
-                48 Active
-              </span>
+            </button>}
+
+            <button onClick={() => setCurrentTab('overtime')} style={btnStyle(currentTab === 'overtime')}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}><ClockIcon size={18} color={currentTab === 'overtime' ? '#4F46E5' : '#64748B'} /><span>Overtime</span></div>
             </button>
 
-            <button onClick={() => setCurrentTab('profile')} style={btnStyle(currentTab === 'profile')}>
+            <button onClick={() => setCurrentTab('reports')} style={btnStyle(currentTab === 'reports')}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}><DashboardIcon size={18} color={currentTab === 'reports' ? '#4F46E5' : '#64748B'} /><span>Reports</span></div>
+            </button>
+
+            <button onClick={() => setCurrentTab('holiday-calendar')} style={btnStyle(currentTab === 'holiday-calendar')}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}><ClipboardIcon size={18} color={currentTab === 'holiday-calendar' ? '#4F46E5' : '#64748B'} /><span>Holiday Calendar</span></div>
+            </button>
+
+            <button onClick={() => setCurrentTab('settings')} style={btnStyle(currentTab === 'settings')}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <UserIcon size={18} color={currentTab === 'profile' ? '#4F46E5' : '#64748B'} />
-                <span>My Profile</span>
+                <UserIcon size={18} color={currentTab === 'settings' ? '#4F46E5' : '#64748B'} />
+                <span>Settings</span>
               </div>
             </button>
           </nav>
         )}
 
-        {/* Dynamic Approval Route Card */}
-        {!isManager && (currentTab === 'apply-leave' || currentTab === 'leaves') && (
-          <div style={{ marginTop: '24px' }}>
-            <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.06em', color: '#94A3B8', textTransform: 'uppercase', marginBottom: '8px' }}>
-              APPROVAL ROUTE
-            </p>
-            <div style={{ padding: '12px', backgroundColor: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: '12px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <div style={{ width: '28px', height: '28px', borderRadius: '50%', backgroundColor: '#FAF5FF', color: '#7E22CE', fontSize: '11px', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  HS
-                </div>
-                <div>
-                  <p style={{ fontSize: '12px', fontWeight: 700, color: '#1E293B', margin: 0 }}>Harsh Suri</p>
-                  <p style={{ fontSize: '10px', color: '#94A3B8', margin: '2px 0 0 0' }}>Reporting Director</p>
-                </div>
-              </div>
-              <p style={{ fontSize: '10px', color: '#94A3B8', marginTop: '10px', paddingTop: '8px', borderTop: '1px solid #E2E8F0' }}>
-                Standard turnaround: Within 24 hours
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* Quota Balances */}
-        {!isManager && currentTab !== 'apply-leave' && currentTab !== 'leaves' && (
-          <div style={{ marginTop: '32px' }}>
-            <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.06em', color: '#94A3B8', textTransform: 'uppercase', marginBottom: '12px' }}>
-              AVAILABLE QUOTA
-            </p>
-            <div style={{ padding: '14px', backgroundColor: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: '14px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 600, color: '#475569', marginBottom: '6px' }}>
-                  <span style={{ color: '#64748B', fontWeight: 500 }}>Casual Leave</span>
-                  <span style={{ color: '#0F172A', fontWeight: 700 }}>8 / 12 Days</span>
-                </div>
-                <div style={{ width: '100%', height: '6px', backgroundColor: '#E2E8F0', borderRadius: '9999px', overflow: 'hidden' }}>
-                  <div style={{ width: '66%', height: '100%', backgroundColor: '#4F46E5', borderRadius: '9999px' }}></div>
-                </div>
-              </div>
-
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 600, color: '#475569', marginBottom: '6px' }}>
-                  <span style={{ color: '#64748B', fontWeight: 500 }}>Sick Leave</span>
-                  <span style={{ color: '#0F172A', fontWeight: 700 }}>5 / 7 Days</span>
-                </div>
-                <div style={{ width: '100%', height: '6px', backgroundColor: '#E2E8F0', borderRadius: '9999px', overflow: 'hidden' }}>
-                  <div style={{ width: '71%', height: '100%', backgroundColor: '#10B981', borderRadius: '9999px' }}></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
 
-      <div style={{ paddingTop: '16px' }}>
+      <div className="sidebar-footer">
         <button
           onClick={logout}
           style={{
@@ -189,13 +156,13 @@ export default function Sidebar({ currentTab, setCurrentTab }) {
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
-            padding: '8px 12px',
+            padding: '10px 12px',
             borderRadius: '10px',
             fontSize: '12px',
             fontWeight: 600,
             color: '#E11D48',
-            backgroundColor: 'transparent',
-            border: 'none',
+            backgroundColor: '#FFF1F2',
+            border: '1px solid #FFE4E6',
             cursor: 'pointer'
           }}
         >

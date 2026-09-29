@@ -1,0 +1,23 @@
+export const haryanaHolidays2026 = [
+  ['Sir Chottu Ram Jayanti / Basant Panchmi', '2026-01-23'],
+  ['Republic Day', '2026-01-26'],
+  ['Holi', '2026-03-04'],
+  ['Shaheedi Diwas', '2026-03-23'],
+  ['Ram Navami', '2026-03-26'],
+  ['Mahavir Jayanti', '2026-03-31'],
+  ['Dr. B.R. Ambedkar Jayanti / Vaisakhi', '2026-04-14'],
+  ['Id-ul-Zuha (Bakrid)', '2026-05-28'],
+  ['Maharana Pratap Jayanti', '2026-06-17'],
+  ['Sant Kabir Jayanti', '2026-06-29'],
+  ['Shaheed Udham Singh Martyrdom Day', '2026-07-31'],
+  ['Raksha Bandhan', '2026-08-28'],
+  ['Janmashtami', '2026-09-04'],
+  ['Shaheed Divas / Haryana War Heroes Martyrdom Day', '2026-09-23'],
+  ['Mahatma Gandhi Jayanti', '2026-10-02'],
+  ['Dussehra', '2026-10-20'],
+  ['Maharishi Valmiki Jayanti', '2026-10-26'],
+  ['Diwali (Sunday)', '2026-11-08'],
+  ['Vishvakarma Day', '2026-11-09'],
+  ['Guru Nanak Dev Jayanti', '2026-11-24'],
+  ['Christmas Day', '2026-12-25']
+].map(([name, date]) => ({ _id: `haryana-reference-${date}`, name, date, description: 'Haryana 2026 holiday calendar reference; confirm your workplace policy', isReference: true }));

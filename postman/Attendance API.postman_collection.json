@@ -1,0 +1,26 @@
+{
+  "info": {
+    "name": "Attendance Management API",
+    "description": "Auth and first-level role checks. Cookies are HttpOnly; Postman stores and sends them automatically.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:4000" },
+    { "key": "email", "value": "employee@example.com" },
+    { "key": "password", "value": "replace-with-test-password" },
+    { "key": "name", "value": "Test Employee" },
+    { "key": "firebaseIdToken", "value": "replace-with-a-fresh-firebase-id-token" }
+  ],
+  "item": [
+    { "name": "Health", "request": { "method": "GET", "url": "{{baseUrl}}/api/health" }, "event": [{ "listen": "test", "script": { "exec": ["pm.test('API is healthy', () => pm.response.to.have.status(200));"] } }] },
+    { "name": "Sign up as Employee", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"{{name}}\",\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\",\n  \"department\": \"Engineering\",\n  \"role\": \"Application Admin\"\n}" }, "url": "{{baseUrl}}/api/auth/signup" }, "event": [{ "listen": "test", "script": { "exec": ["pm.test('New account is created as Employee regardless of submitted role', () => { pm.response.to.have.status(201); pm.expect(pm.response.json().user.role).to.eql('Employee'); });", "pm.test('Password is never returned', () => pm.expect(pm.response.text()).not.to.include(pm.variables.get('password')));"] } }] },
+    { "name": "Duplicate signup should conflict", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Duplicate\",\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}" }, "url": "{{baseUrl}}/api/auth/signup" }, "event": [{ "listen": "test", "script": { "exec": ["pm.test('Duplicate email returns 409', () => pm.response.to.have.status(409));"] } }] },
+    { "name": "Current user", "request": { "method": "GET", "url": "{{baseUrl}}/api/auth/me" }, "event": [{ "listen": "test", "script": { "exec": ["pm.test('Authenticated as Employee', () => { pm.response.to.have.status(200); pm.expect(pm.response.json().user.role).to.eql('Employee'); });"] } }] },
+    { "name": "Employee cannot list admin users", "request": { "method": "GET", "url": "{{baseUrl}}/api/admin/users" }, "event": [{ "listen": "test", "script": { "exec": ["pm.test('Employee is denied admin endpoint', () => pm.response.to.have.status(403));"] } }] },
+    { "name": "Refresh session", "request": { "method": "POST", "url": "{{baseUrl}}/api/auth/refresh" }, "event": [{ "listen": "test", "script": { "exec": ["pm.test('Refresh rotates cookies and returns user', () => { pm.response.to.have.status(200); pm.expect(pm.response.json().user.role).to.eql('Employee'); });"] } }] },
+    { "name": "Login", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}" }, "url": "{{baseUrl}}/api/auth/login" }, "event": [{ "listen": "test", "script": { "exec": ["pm.test('Login returns user', () => pm.response.to.have.status(200));"] } }] },
+    { "name": "Bad login", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"wrong-password\"\n}" }, "url": "{{baseUrl}}/api/auth/login" }, "event": [{ "listen": "test", "script": { "exec": ["pm.test('Bad password is rejected', () => pm.response.to.have.status(401));"] } }] },
+    { "name": "Firebase sign-in (optional)", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"idToken\": \"{{firebaseIdToken}}\",\n  \"name\": \"Test Phone User\"\n}" }, "url": "{{baseUrl}}/api/auth/firebase" }, "event": [{ "listen": "test", "script": { "exec": ["pm.test('Firebase ID token is verified and gets an app session', () => { pm.response.to.have.status(200); pm.expect(pm.response.json().user.role).to.eql('Employee'); });"] } }] },
+    { "name": "Logout", "request": { "method": "POST", "url": "{{baseUrl}}/api/auth/logout" }, "event": [{ "listen": "test", "script": { "exec": ["pm.test('Logout clears cookies', () => pm.response.to.have.status(204));"] } }] }
+  ]
+}

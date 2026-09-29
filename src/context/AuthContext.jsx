@@ -1,69 +1,78 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { apiRequest } from '../lib/api';
 
-const AuthContext = createContext();
-
-export const mockUsers = {
-  employee: {
-    id: 'EMP-1042',
-    name: 'Arpit Singla',
-    role: 'Employee',
-    designation: 'Software Engineer',
-    department: 'Engineering',
-    branch: 'Panchkula Branch',
-    email: 'arpit.singla@company.com',
-    initials: 'AS',
-    avatarBg: 'indigo',
-    biometricId: 'BIO-88319',
-    phone: '+91 98765 43210'
-  },
-  manager: {
-    id: 'MGR-0021',
-    name: 'Harsh Suri',
-    role: 'Manager',
-    designation: 'Engineering Director',
-    department: 'Engineering & Tech Ops',
-    branch: 'Engineering & Tech Ops',
-    email: 'harsh.suri@company.com',
-    initials: 'HS',
-    avatarBg: 'purple',
-    biometricId: 'BIO-11024',
-    phone: '+91 98123 45678'
-  }
-};
+const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
+  const [authReady, setAuthReady] = useState(false);
+  const currentUserId = currentUser?.id;
 
-  const login = (role) => {
-    if (role === 'manager') setCurrentUser(mockUsers.manager);
-    else setCurrentUser(mockUsers.employee);
-  };
-
-  const logout = () => setCurrentUser(null);
-
-  const updateProfile = (updatedData) => {
-    let newInitials = updatedData.initials;
-    if (updatedData.name) {
-      const parts = updatedData.name.trim().split(/\s+/);
-      if (parts.length >= 2) {
-        newInitials = (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-      } else if (parts.length === 1 && parts[0].length > 0) {
-        newInitials = parts[0].substring(0, 2).toUpperCase();
-      }
+  const refreshSession = useCallback(async () => {
+    try {
+      const { user } = await apiRequest('/auth/refresh', { method: 'POST' });
+      setCurrentUser(user);
+      return user;
+    } catch {
+      setCurrentUser(null);
+      return null;
     }
+  }, []);
 
-    setCurrentUser((prev) => ({
-      ...prev,
-      ...updatedData,
-      initials: newInitials || prev?.initials || 'AS'
-    }));
-  };
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      try {
+        const { user } = await apiRequest('/auth/session', { method: 'POST' });
+        if (active) setCurrentUser(user);
+      } catch {
+        if (active) setCurrentUser(null);
+      } finally {
+        if (active) setAuthReady(true);
+      }
+    })();
+    return () => { active = false; };
+  }, []);
 
-  return (
-    <AuthContext.Provider value={{ currentUser, login, logout, updateProfile }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  useEffect(() => {
+    if (!currentUserId) return undefined;
+    const timer = window.setInterval(() => {
+      if (document.visibilityState === 'visible') refreshSession();
+    }, 14 * 60 * 1000);
+    return () => window.clearInterval(timer);
+  }, [currentUserId, refreshSession]);
+
+  const login = useCallback(async (credentials) => {
+    const { user } = await apiRequest('/auth/login', { method: 'POST', body: JSON.stringify(credentials) });
+    setCurrentUser(user);
+    return user;
+  }, []);
+
+  const signup = useCallback(async (details) => {
+    const { user } = await apiRequest('/auth/signup', { method: 'POST', body: JSON.stringify(details) });
+    setCurrentUser(user);
+    return user;
+  }, []);
+
+  const loginWithFirebase = useCallback(async (idToken, name = '') => {
+    const { user } = await apiRequest('/auth/firebase', { method: 'POST', body: JSON.stringify({ idToken, name }) });
+    setCurrentUser(user);
+    return user;
+  }, []);
+
+  const logout = useCallback(async () => {
+    try { await apiRequest('/auth/logout', { method: 'POST' }); }
+    finally { setCurrentUser(null); }
+  }, []);
+
+  const updateProfile = useCallback(async (updatedData) => {
+    const { user } = await apiRequest('/profile', { method: 'PATCH', body: JSON.stringify(updatedData) });
+    setCurrentUser(user);
+    return user;
+  }, []);
+
+  const value = useMemo(() => ({ currentUser, authReady, login, signup, loginWithFirebase, logout, updateProfile, apiRequest }), [currentUser, authReady, login, signup, loginWithFirebase, logout, updateProfile]);
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => useContext(AuthContext);

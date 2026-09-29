@@ -24,7 +24,7 @@ export default function OnboardMember({ onDone }) {
           <div className="flex justify-between items-center pb-4 border-b border-slate-100 mb-5">
             <div>
               <h2 className="text-xs font-bold uppercase tracking-wider text-slate-800">MEMBER DETAILS & WORK PROFILE</h2>
-              <p className="text-[10px] text-slate-400">Assigned under Harsh Suri's direct supervision</p>
+              <p className="text-[10px] text-slate-400">Reporting manager is assigned by an administrator after account creation.</p>
             </div>
             <span className="text-[10px] bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded font-semibold">Step 1 of 1</span>
           </div>
@@ -167,7 +167,7 @@ export default function OnboardMember({ onDone }) {
             <ul className="list-disc pl-4 space-y-1.5 text-slate-500 text-[11px]">
               <li>Temporary credentials are dispatched to the work email immediately.</li>
               <li>Biometric enrollment requires first physical verification at Gate 1.</li>
-              <li>Direct reports are automatically mapped to Harsh Suri's approval queue.</li>
+              <li>Leave requests are routed to each employee’s assigned reporting manager.</li>
             </ul>
           </div>
         </div>

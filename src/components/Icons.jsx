@@ -63,3 +63,10 @@ export const LogoutIcon = ({ size = 16, color = "currentColor" }) => (
     <line x1="21" y1="12" x2="9" y2="12"></line>
   </svg>
 );
+
+export const ShieldIcon = ({ size = 18, color = "currentColor" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+    <path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z"></path>
+    <path d="m9 12 2 2 4-4"></path>
+  </svg>
+);
