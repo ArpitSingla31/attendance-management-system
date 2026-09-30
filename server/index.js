@@ -6,7 +6,7 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { rateLimit } from 'express-rate-limit';
 import jwt from 'jsonwebtoken';
-import { applicationDefault, getApps, initializeApp } from 'firebase-admin/app';
+import { applicationDefault, cert, getApps, initializeApp } from 'firebase-admin/app';
 import { getAuth as getFirebaseAdminAuth } from 'firebase-admin/auth';
 import User, { EMPLOYMENT_TYPES, ROLES } from './models/User.js';
 import LeaveRequest, { LEAVE_CATEGORIES } from './models/LeaveRequest.js';
@@ -63,10 +63,19 @@ function issueSession(res, user) {
 }
 function getFirebaseVerifier() {
   if (!process.env.FIREBASE_PROJECT_ID) throw new Error('Firebase Google sign-in is not configured on the server.');
-  const app = getApps().find((entry) => entry.name === 'attendance-firebase') || initializeApp({
-    credential: applicationDefault(),
-    projectId: process.env.FIREBASE_PROJECT_ID
-  }, 'attendance-firebase');
+  let credential;
+  if (process.env.FIREBASE_SERVICE_ACCOUNT_JSON) {
+    let serviceAccount;
+    try { serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON); }
+    catch { throw new Error('FIREBASE_SERVICE_ACCOUNT_JSON must contain valid service-account JSON.'); }
+    if (serviceAccount.project_id !== process.env.FIREBASE_PROJECT_ID) {
+      const error = new Error('Firebase service-account project does not match FIREBASE_PROJECT_ID.');
+      error.code = 'FIREBASE_PROJECT_MISMATCH';
+      throw error;
+    }
+    credential = cert(serviceAccount);
+  } else credential = applicationDefault();
+  const app = getApps().find((entry) => entry.name === 'attendance-firebase') || initializeApp({ credential, projectId: process.env.FIREBASE_PROJECT_ID }, 'attendance-firebase');
   return getFirebaseAdminAuth(app);
 }
 
@@ -110,13 +119,23 @@ app.post('/api/auth/firebase', firebaseLoginLimiter, async (req, res, next) => {
     if (typeof idToken !== 'string' || idToken.length < 100 || idToken.length > 10000) return res.status(400).json({ message: 'A valid Firebase ID token is required.' });
     let verifier;
     try { verifier = getFirebaseVerifier(); }
-    catch (error) { console.error('Firebase Admin setup is unavailable:', error.message); return res.status(503).json({ message: 'Google sign-in is not configured on the server.' }); }
+    catch (error) {
+      console.error('Firebase Admin setup is unavailable:', error.code || error.message);
+      const message = error.code === 'FIREBASE_PROJECT_MISMATCH'
+        ? 'The Firebase service account and FIREBASE_PROJECT_ID on the API must belong to the same Firebase project.'
+        : 'The API could not load Firebase Admin credentials. Add a valid FIREBASE_SERVICE_ACCOUNT_JSON secret to Render and redeploy.';
+      return res.status(503).json({ message });
+    }
     let identity;
     try { identity = await verifier.verifyIdToken(idToken, true); }
     catch (error) {
       console.warn('Firebase rejected a sign-in token:', error.code || error.message);
       const code = typeof error.code === 'string' ? error.code : 'unknown';
-      return res.status(401).json({ message: `Firebase rejected this sign-in token (${code}). Check that the server Firebase project and browser Firebase project match.`, code });
+      const credentialError = code === 'app/invalid-credential' || code === 'auth/invalid-credential';
+      const message = credentialError
+        ? 'The API’s Firebase Admin credential was rejected. Replace FIREBASE_SERVICE_ACCOUNT_JSON in Render with a valid key from the same Firebase project, then redeploy.'
+        : `Firebase rejected this sign-in token (${code}). Ensure VITE_FIREBASE_PROJECT_ID on Vercel matches FIREBASE_PROJECT_ID on Render.`;
+      return res.status(401).json({ message, code });
     }
     const provider = identity.firebase?.sign_in_provider;
     const isGoogle = provider === 'google.com' && identity.email && identity.email_verified === true;
