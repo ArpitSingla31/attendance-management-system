@@ -15,6 +15,7 @@ import Attendance from './models/Attendance.js';
 import { ACCESS_COOKIE, REFRESH_COOKIE, clearAuthCookies, hashToken, issueTokens, safeUser, setAuthCookies } from './auth.js';
 
 const app = express();
+app.set('trust proxy', 1);
 const port = Number(process.env.PORT || 4000);
 const frontendOrigin = process.env.FRONTEND_ORIGIN || 'http://localhost:5173';
 app.use(cors({ origin: frontendOrigin, credentials: true }));
