@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { resolveAvatarUrl } from '../components/ProfileAvatar';
 
 const inputStyle = {
   width: '100%', boxSizing: 'border-box', padding: '11px 12px', background: '#F8FAFC',
@@ -41,6 +42,7 @@ export default function ProfileUpdate() {
   const [form, setForm] = useState({ name: currentUser?.name || '', designation: currentUser?.designation || '', contactPhone: currentUser?.contactPhone || '' });
   const [photoData, setPhotoData] = useState(undefined);
   const [previewUrl, setPreviewUrl] = useState(currentUser?.avatarUrl || null);
+  const [photoFailed, setPhotoFailed] = useState(false);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState(null);
 
@@ -54,6 +56,7 @@ export default function ProfileUpdate() {
       const dataUrl = await makePhotoDataUrl(file);
       setPhotoData(dataUrl);
       setPreviewUrl(dataUrl);
+      setPhotoFailed(false);
     } catch (error) {
       setMessage({ type: 'error', text: error.message });
     } finally {
@@ -64,6 +67,7 @@ export default function ProfileUpdate() {
   const removePhoto = () => {
     setPhotoData('');
     setPreviewUrl(null);
+    setPhotoFailed(false);
   };
 
   const handleSubmit = async (event) => {
@@ -73,6 +77,7 @@ export default function ProfileUpdate() {
     try {
       const user = await updateProfile({ ...form, ...(photoData !== undefined ? { avatarData: photoData } : {}) });
       setPreviewUrl(user.avatarUrl || null);
+      setPhotoFailed(false);
       setPhotoData(undefined);
       setMessage({ type: 'success', text: 'Profile changes saved.' });
     } catch (error) {
@@ -95,7 +100,7 @@ export default function ProfileUpdate() {
       <form onSubmit={handleSubmit} className="surface-card" style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '16px', padding: 'clamp(16px, 4vw, 26px)', boxShadow: '0 1px 3px rgba(15,23,42,.04)' }}>
         <section style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap', paddingBottom: '22px', borderBottom: '1px solid #F1F5F9' }}>
           <div style={{ width: '76px', height: '76px', flex: '0 0 76px', borderRadius: '50%', overflow: 'hidden', display: 'grid', placeItems: 'center', background: '#EEF2FF', color: '#4338CA', fontSize: '24px', fontWeight: 750, border: '2px solid #E0E7FF' }}>
-            {previewUrl ? <img src={previewUrl} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : initials(form.name)}
+            {previewUrl && !photoFailed ? <img crossOrigin="use-credentials" src={resolveAvatarUrl(previewUrl)} alt="Profile" onError={() => setPhotoFailed(true)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : initials(form.name)}
           </div>
           <div style={{ flex: '1 1 190px', minWidth: 0 }}>
             <h2 style={{ margin: 0, fontSize: '16px', color: '#0F172A', overflowWrap: 'anywhere' }}>{form.name || 'Your profile'}</h2>

@@ -674,7 +674,7 @@ function MainApp() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: '#F8FAFC' }}>
+    <div className="workspace-root" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: '#F8FAFC' }}>
       <Header
         activeTab={currentTab}
         onNavigate={handleTabSelect}
@@ -682,7 +682,7 @@ function MainApp() {
         onToggleMenu={() => setMobileMenuOpen(!mobileMenuOpen)}
       />
 
-      <div style={{ display: 'flex', flex: 1, position: 'relative' }}>
+      <div className="workspace-body" style={{ display: 'flex', flex: 1, position: 'relative' }}>
         {/* Mobile Backdrop Overlay */}
         {isMobile && mobileMenuOpen && (
           <div
@@ -715,7 +715,7 @@ function MainApp() {
         </div>
 
         {/* Main Content Area */}
-        <main style={{
+        <main className="workspace-main" style={{
           flex: 1,
           padding: isMobile ? '16px' : '24px 32px',
           minWidth: 0,

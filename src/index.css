@@ -281,3 +281,85 @@ button { touch-action: manipulation; }
     min-height: 38px;
   }
 }
+
+/* Phone workspace: a tighter, single-column layout with larger touch targets. */
+@media (max-width: 768px) {
+  .workspace-root { min-height: 100dvh !important; }
+
+  .app-header {
+    min-height: 60px !important;
+    height: 60px !important;
+    padding-left: max(10px, env(safe-area-inset-left)) !important;
+    padding-right: max(10px, env(safe-area-inset-right)) !important;
+    gap: 7px;
+  }
+
+  .app-header > div:first-child { gap: 7px !important; min-width: 0; }
+  .app-header > div:first-child > button { padding: 5px !important; }
+  .app-header .brand-copy p { display: none; }
+  .app-header .brand-copy span { font-size: 14px !important; }
+  .app-header > div:last-child { gap: 6px !important; }
+  .app-header > div:last-child > div > button[aria-label="Notifications"] { width: 38px !important; height: 38px !important; }
+
+  .workspace-body { min-height: calc(100dvh - 60px); }
+  .workspace-main {
+    width: 100%;
+    min-width: 0;
+    overflow-x: hidden !important;
+    padding: 12px !important;
+    padding-bottom: max(20px, env(safe-area-inset-bottom)) !important;
+  }
+
+  .workspace-main > section {
+    width: 100% !important;
+    max-width: 100% !important;
+    gap: 13px !important;
+  }
+
+  .workspace-main .dashboard-hero {
+    padding: 19px 17px !important;
+    border-radius: 17px !important;
+    margin-bottom: 0 !important;
+  }
+
+  .workspace-main .dashboard-hero h1 { font-size: clamp(21px, 6vw, 25px) !important; line-height: 1.2 !important; }
+  .workspace-main .dashboard-hero p { line-height: 1.5; }
+  .workspace-main .dashboard-hero-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 14px; }
+  .workspace-main .dashboard-hero-actions button { min-height: 44px; padding: 10px !important; }
+
+  .workspace-main .surface-card,
+  .workspace-main article,
+  .workspace-main form,
+  .workspace-main section > div[style*="border: 1px solid"] {
+    border-radius: 14px;
+  }
+
+  .workspace-main .surface-card { padding: 14px !important; }
+  .workspace-main input:not([type="checkbox"]),
+  .workspace-main select,
+  .workspace-main textarea { min-height: 44px; font-size: 16px !important; }
+  .workspace-main button { min-height: 40px; touch-action: manipulation; }
+  .workspace-main table { display: block; width: 100%; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: nowrap; }
+  .workspace-main .settings-grid { grid-template-columns: minmax(0, 1fr) !important; }
+
+  .workspace-main > main {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+
+  .workspace-main > main form { padding: 16px !important; }
+  .workspace-main > main .dashboard-hero { padding: 19px 17px !important; }
+  .individual-shift-row { padding: 11px !important; gap: 9px !important; }
+  .individual-shift-row input { padding: 9px 7px !important; }
+}
+
+@media (max-width: 390px) {
+  .app-header .brand-copy { display: none; }
+  .workspace-main { padding: 10px !important; }
+  .workspace-main .dashboard-hero-actions { grid-template-columns: minmax(0, 1fr); }
+  .workspace-main .surface-card { padding: 12px !important; }
+  .individual-shift-row { grid-template-columns: minmax(0, 1fr) !important; }
+  .individual-shift-row > div:first-child,
+  .individual-shift-row > div:last-child { grid-column: auto !important; }
+}

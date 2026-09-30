@@ -265,23 +265,7 @@ export default function Header({ onNavigate, activeTab, isMobile, onToggleMenu }
             borderRadius: '8px'
           }}
         >
-          <div style={{
-            width: '34px',
-            height: '34px',
-            borderRadius: '50%',
-            backgroundColor: currentUser?.avatarBg === 'purple' ? '#FAF5FF' : '#EEF2FF',
-            color: currentUser?.avatarBg === 'purple' ? '#7E22CE' : '#4F46E5',
-            fontWeight: 700,
-            fontSize: '13px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            border: '1.5px solid #C7D2FE',
-            overflow: 'hidden',
-            flexShrink: 0
-          }}>
-            {currentUser?.avatarUrl ? <img src={currentUser.avatarUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} /> : (currentUser?.initials || currentUser?.name?.slice(0, 2).toUpperCase() || '?')}
-          </div>
+          <ProfileAvatar person={currentUser} size={34} />
           {!isMobile && (
             <div style={{ textAlign: 'left' }}>
               <p style={{ fontSize: '12px', fontWeight: 600, color: '#1E293B', margin: 0 }}>
