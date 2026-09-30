@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 export const ACCESS_COOKIE = 'attendance_access';
 export const REFRESH_COOKIE = 'attendance_refresh';
 const secure = process.env.NODE_ENV === 'production';
-const cookieBase = { httpOnly: true, secure, sameSite: 'lax', path: '/' };
+const cookieBase = { httpOnly: true, secure, sameSite: secure ? 'none' : 'lax', path: '/' };
 export function setAuthCookies(res, accessToken, refreshToken) {
   res.cookie(ACCESS_COOKIE, accessToken, { ...cookieBase, maxAge: 15 * 60 * 1000 });
   res.cookie(REFRESH_COOKIE, refreshToken, { ...cookieBase, maxAge: 7 * 24 * 60 * 60 * 1000, path: '/api/auth' });

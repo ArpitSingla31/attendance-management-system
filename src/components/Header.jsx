@@ -6,7 +6,7 @@ import { haryanaHolidays2026 } from '../data/haryanaHolidays2026';
 import { useAttendanceStatus } from '../hooks/useAttendanceStatus';
 
 export default function Header({ onNavigate, activeTab, isMobile, onToggleMenu }) {
-  const { currentUser, apiRequest } = useAuth();
+  const { currentUser, apiRequest, logout } = useAuth();
   const { now, timeZone, today, isReady: clockReady, status: punctuality, color: punctualityColor } = useAttendanceStatus();
   const isManager = currentUser?.role !== 'Employee';
   const isAdmin = ['Organization Admin', 'Application Admin'].includes(currentUser?.role);
@@ -20,8 +20,10 @@ export default function Header({ onNavigate, activeTab, isMobile, onToggleMenu }
   const [searchItems, setSearchItems] = useState([]);
   const [clockBusy, setClockBusy] = useState(false);
   const [clockMessage, setClockMessage] = useState('');
+  const [accountOpen, setAccountOpen] = useState(false);
   const notificationRef = useRef(null);
   const searchRef = useRef(null);
+  const accountRef = useRef(null);
 
   const punchAction = today?.checkInAt ? (today.checkOutAt ? null : 'check-out') : 'check-in';
   // The API records a punch for the signed-in account, so expose the shared
@@ -116,9 +118,10 @@ export default function Header({ onNavigate, activeTab, isMobile, onToggleMenu }
     const onPointerDown = (event) => {
       if (!notificationRef.current?.contains(event.target)) setNotificationsOpen(false);
       if (!searchRef.current?.contains(event.target)) setSearchOpen(false);
+      if (!accountRef.current?.contains(event.target)) setAccountOpen(false);
     };
     const onKeyDown = (event) => {
-      if (event.key === 'Escape') { setNotificationsOpen(false); setSearchOpen(false); }
+      if (event.key === 'Escape') { setNotificationsOpen(false); setSearchOpen(false); setAccountOpen(false); }
     };
     document.addEventListener('pointerdown', onPointerDown);
     document.addEventListener('keydown', onKeyDown);
@@ -244,10 +247,13 @@ export default function Header({ onNavigate, activeTab, isMobile, onToggleMenu }
         </div>
 
         {/* User DP Avatar Target Button */}
+        <div ref={accountRef} style={{ position: 'relative' }}>
         <button
           type="button"
-          onClick={() => onNavigate('profile')}
-          title="Click to view & update profile"
+          onClick={() => setAccountOpen((open) => !open)}
+          aria-label="Account menu"
+          aria-expanded={accountOpen}
+          title="Account menu"
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -287,6 +293,12 @@ export default function Header({ onNavigate, activeTab, isMobile, onToggleMenu }
             </div>
           )}
         </button>
+        {accountOpen && <div style={{ position: 'absolute', top: 48, right: 0, zIndex: 60, width: 190, padding: 6, border: '1px solid #E2E8F0', borderRadius: 12, background: '#FFFFFF', boxShadow: '0 14px 32px rgba(15,23,42,.16)' }}>
+          <p style={{ margin: '7px 9px 8px', color: '#64748B', fontSize: 11 }}>{currentUser?.name || 'Signed-in account'}</p>
+          <button type="button" onClick={() => { setAccountOpen(false); onNavigate('profile'); }} style={{ width: '100%', padding: '9px', textAlign: 'left', border: 0, borderRadius: 8, background: '#FFFFFF', color: '#334155', fontSize: 12, cursor: 'pointer' }}>My profile</button>
+          <button type="button" onClick={async () => { setAccountOpen(false); await logout().catch(() => {}); }} style={{ width: '100%', padding: '9px', textAlign: 'left', border: 0, borderRadius: 8, background: '#FFF1F2', color: '#BE123C', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>Sign out</button>
+        </div>}
+        </div>
       </div>
     </header>
   );

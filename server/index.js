@@ -21,6 +21,20 @@ const frontendOrigin = process.env.FRONTEND_ORIGIN || 'http://localhost:5173';
 app.use(cors({ origin: frontendOrigin, credentials: true }));
 app.use(express.json({ limit: '2mb' }));
 app.use(cookieParser());
+const allowedFrontendOrigin = new URL(frontendOrigin).origin;
+app.use((req, res, next) => {
+  const isUnsafeMethod = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method);
+  if (!isUnsafeMethod) return next();
+
+  const hasSessionCookie = Boolean(req.cookies[ACCESS_COOKIE] || req.cookies[REFRESH_COOKIE]);
+  const requestOrigin = req.get('origin');
+  // Browser requests carry Origin. Reject mismatched origins even before
+  // authentication; cookie-less API clients such as Postman may omit it.
+  if ((requestOrigin || hasSessionCookie) && requestOrigin !== allowedFrontendOrigin) {
+    return res.status(403).json({ message: 'Request origin is not allowed.' });
+  }
+  return next();
+});
 const signInLimiter = () => rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 10,
