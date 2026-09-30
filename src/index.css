@@ -253,6 +253,45 @@ button { touch-action: manipulation; }
 .sidebar-nav button:focus-visible, .sidebar-footer button:focus-visible { outline: 3px solid rgba(99, 102, 241, .22); outline-offset: 1px; }
 .sidebar-footer { flex: 0 0 auto; padding-top: 12px; }
 
+/* Calendar structure shared by desktop and phone views. */
+.calendar-layout { min-width: 0; }
+.calendar-widget { min-width: 0; }
+.calendar-title { display: flex; align-items: center; justify-content: center; gap: 9px; min-width: 0; }
+.calendar-title strong { font-size: 17px; }
+.calendar-weekdays { margin-bottom: 4px; }
+.calendar-day { min-width: 0; min-height: 42px; display: grid; place-items: center; position: relative; border-radius: 10px; color: #334155; background: #f8fafc; font-size: 13px; font-weight: 600; }
+.calendar-day.is-holiday { color: #4338ca; background: #eef2ff; box-shadow: inset 0 0 0 1px #dfe3ff; }
+.calendar-holiday-dot { display: inline-block; width: 6px; height: 6px; flex: 0 0 6px; border-radius: 50%; background: #4f46e5; }
+.calendar-day .calendar-holiday-dot { position: absolute; bottom: 5px; }
+.calendar-legend { display: flex; align-items: center; gap: 7px; padding-top: 13px; color: #64748b; font-size: 11px; }
+.calendar-legend-count { margin-left: auto; color: #94a3b8; }
+.holiday-agenda { display: grid; align-content: start; gap: 9px; min-width: 0; }
+.holiday-agenda-heading { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 2px 2px 4px; }
+.holiday-count { display: grid; min-width: 30px; height: 30px; place-items: center; padding: 0 7px; border-radius: 10px; background: #eef2ff; color: #4338ca; font-size: 12px; font-weight: 800; }
+.holiday-row { display: flex; align-items: center; gap: 12px; padding: 11px 12px; border: 1px solid #e7ebf3; border-radius: 13px; background: #fff; box-shadow: 0 3px 12px rgba(15, 23, 42, .035); }
+.holiday-date-badge { display: grid; width: 45px; height: 48px; flex: 0 0 45px; align-content: center; justify-items: center; gap: 1px; border-radius: 11px; background: #f1f2ff; color: #4338ca; }
+.holiday-date-badge strong { font-size: 17px; line-height: 1; }
+.holiday-date-badge small { font-size: 10px; font-weight: 800; text-transform: uppercase; }
+.holiday-copy { flex: 1; min-width: 0; }
+.holiday-copy > strong { color: #172033; font-size: 13px; }
+.holiday-copy p { margin: 4px 0 0; color: #64748b; font-size: 11px; line-height: 1.4; }
+.holiday-copy small { display: block; margin-top: 4px; color: #94a3b8; font-size: 10px; }
+.holiday-remove { min-height: 34px; padding: 5px 8px; border: 0; border-radius: 8px; background: #fff1f2; color: #be123c; font-size: 10px; font-weight: 700; cursor: pointer; }
+.holiday-see-more { width: 100%; min-height: 42px; padding: 9px 12px; border: 1px solid #dfe3ff; border-radius: 11px; background: #f5f5ff; color: #4338ca; font-size: 12px; font-weight: 800; cursor: pointer; }
+.holiday-see-more:hover { background: #ededff; }
+.expandable-list { display: grid; gap: 10px; min-width: 0; }
+.see-more-list { width: 100%; min-height: 42px; padding: 9px 12px; border: 1px solid #e2e8f0; border-radius: 11px; background: #fff; color: #4f46e5; font-size: 12px; font-weight: 800; cursor: pointer; }
+.see-more-list:hover { border-color: #c7d2fe; background: #f8faff; }
+.notification-items { gap: 0; }
+.notification-items .see-more-list { margin: 9px; width: calc(100% - 18px); }
+.staff-mobile-list { display: none; }
+.staff-mobile-more { display: none; }
+.staff-desktop-more { padding: 0 14px 14px; }
+.staff-search { display: grid; grid-template-columns: auto minmax(150px, 250px); align-items: center; gap: 8px; }
+.staff-search-label { color: #64748b; font-size: 11px; font-weight: 700; }
+.staff-search input { width: 100%; min-height: 38px; padding: 8px 11px; border: 1px solid #dbe3f0; border-radius: 10px; background: #f8fafc; color: #172033; font-size: 12px; }
+.staff-account-count { flex: 0 0 auto; color: #475569; background: #f1f5f9; border-radius: 999px; padding: 6px 10px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+
 @media (max-width: 640px) {
   .dashboard-hero {
     padding: 20px;
@@ -280,18 +319,45 @@ button { touch-action: manipulation; }
   .individual-shift-row > button {
     min-height: 38px;
   }
+
+  .staff-access-page { gap: 13px !important; }
+  .staff-access-panel { overflow: visible !important; }
+  .staff-access-panel > table { display: none !important; }
+  .staff-desktop-more { display: none; }
+  .staff-access-toolbar { display: grid !important; grid-template-columns: minmax(0, 1fr) auto; gap: 10px !important; padding: 14px !important; }
+  .staff-search { grid-column: 1 / -1; grid-template-columns: minmax(0, 1fr); gap: 5px; }
+  .staff-search input { max-width: none; min-height: 44px; font-size: 16px; }
+  .staff-mobile-list { display: grid; gap: 11px; padding: 12px; }
+  .staff-mobile-more { display: block; padding: 0 12px 12px; }
+  .staff-mobile-card { min-width: 0; padding: 14px; border: 1px solid #e5eaf3; border-radius: 15px; background: linear-gradient(155deg, #fff 0%, #fbfcff 100%); box-shadow: 0 5px 16px rgba(15, 23, 42, .045); }
+  .staff-card-heading { display: flex; align-items: center; gap: 11px; padding-bottom: 13px; border-bottom: 1px solid #edf0f5; }
+  .staff-card-identity { display: grid; min-width: 0; gap: 3px; }
+  .staff-card-identity strong { color: #172033; font-size: 14px; overflow-wrap: anywhere; }
+  .staff-card-identity span { color: #64748b; font-size: 11px; overflow-wrap: anywhere; }
+  .staff-card-identity small { color: #94a3b8; font-size: 10px; }
+  .staff-card-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 11px 10px; padding: 14px 0; }
+  .staff-card-fields label { display: grid; min-width: 0; gap: 5px; color: #64748b; font-size: 10px; font-weight: 800; }
+  .staff-card-fields input, .staff-card-fields select { width: 100%; min-width: 0; min-height: 43px; padding: 9px 10px; border: 1px solid #d8dfeb; border-radius: 9px; background: #fff; color: #1e293b; font-size: 13px; }
+  .staff-card-fields .staff-manager-field { grid-column: 1 / -1; }
+  .staff-card-save { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-top: 12px; border-top: 1px solid #edf0f5; }
+  .staff-card-save button { width: 100%; min-height: 44px; border: 0; border-radius: 10px; background: #4f46e5; color: white; font-size: 13px; font-weight: 800; cursor: pointer; }
+  .staff-card-save button:disabled { background: #a5b4fc; }
+  .staff-card-save small { flex: 0 0 auto; color: #15803d; font-size: 10px; font-weight: 700; }
+  .staff-list-message { margin: 0; padding: 18px 8px; color: #64748b; font-size: 13px; text-align: center; }
 }
 
-/* Phone workspace: a tighter, single-column layout with larger touch targets. */
+/* Phone workspace: a distinct app shell with role-aware bottom navigation. */
 @media (max-width: 768px) {
-  .workspace-root { min-height: 100dvh !important; }
+  body, #root { background: #f3f5fa; }
+  .workspace-root { min-height: 100dvh !important; background: #f3f5fa !important; }
 
   .app-header {
     min-height: 60px !important;
     height: 60px !important;
-    padding-left: max(10px, env(safe-area-inset-left)) !important;
-    padding-right: max(10px, env(safe-area-inset-right)) !important;
+    padding-left: max(12px, env(safe-area-inset-left)) !important;
+    padding-right: max(12px, env(safe-area-inset-right)) !important;
     gap: 7px;
+    box-shadow: 0 2px 14px rgba(15, 23, 42, .07);
   }
 
   .app-header > div:first-child { gap: 7px !important; min-width: 0; }
@@ -306,8 +372,69 @@ button { touch-action: manipulation; }
     width: 100%;
     min-width: 0;
     overflow-x: hidden !important;
-    padding: 12px !important;
-    padding-bottom: max(20px, env(safe-area-inset-bottom)) !important;
+    padding: 15px 14px 104px !important;
+  }
+
+  .mobile-tabbar {
+    position: fixed;
+    z-index: 35;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 2px;
+    min-height: 66px;
+    padding: 7px max(8px, env(safe-area-inset-right)) max(7px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+    border-top: 1px solid #e6eaf2;
+    background: rgba(255, 255, 255, .97);
+    box-shadow: 0 -8px 28px rgba(15, 23, 42, .08);
+    backdrop-filter: blur(18px);
+  }
+
+  .mobile-tab {
+    display: flex;
+    min-width: 0;
+    min-height: 48px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 4px 2px;
+    border: 0;
+    border-radius: 13px;
+    background: transparent;
+    color: #738096;
+    font-size: 9px;
+    font-weight: 700;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .mobile-tab.active { background: #f0efff; color: #4338ca; }
+  .mobile-tab.active svg { filter: drop-shadow(0 2px 3px rgba(79, 70, 229, .16)); }
+  .mobile-tab span { overflow: hidden; max-width: 100%; text-overflow: ellipsis; white-space: nowrap; }
+
+  .mobile-menu-backdrop {
+    position: fixed !important;
+    inset: 60px 0 calc(70px + env(safe-area-inset-bottom)) !important;
+    z-index: 40 !important;
+    background: rgba(15, 23, 42, .36) !important;
+    backdrop-filter: blur(3px) !important;
+  }
+  .mobile-sidebar-panel {
+    top: 60px !important;
+    bottom: calc(70px + env(safe-area-inset-bottom)) !important;
+    height: auto !important;
+    width: min(84vw, 320px);
+    z-index: 45 !important;
+    filter: drop-shadow(12px 0 25px rgba(15, 23, 42, .14));
+  }
+  .mobile-sidebar-panel .app-sidebar {
+    width: 100% !important;
+    min-height: 100% !important;
+    height: 100% !important;
+    padding: 17px 13px max(12px, env(safe-area-inset-bottom)) !important;
+    border-radius: 0 20px 20px 0;
   }
 
   .workspace-main > section {
@@ -315,6 +442,15 @@ button { touch-action: manipulation; }
     max-width: 100% !important;
     gap: 13px !important;
   }
+
+  .workspace-main .employee-dashboard { gap: 14px !important; }
+  .workspace-main .employee-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 9px !important; }
+  .workspace-main .employee-metrics .dashboard-action-card:nth-child(1),
+  .workspace-main .employee-metrics .dashboard-action-card:nth-child(2) { grid-column: 1 / -1; }
+  .workspace-main .employee-metrics .dashboard-action-card { min-width: 0; min-height: 132px; padding: 14px !important; border-radius: 16px !important; box-shadow: 0 7px 20px rgba(25, 36, 68, .055); }
+  .workspace-main .employee-metrics .employee-attendance-card { background: linear-gradient(140deg, #fff 0%, #f3f2ff 100%) !important; }
+  .workspace-main .employee-metrics .dashboard-action-card strong { line-height: 1.25; }
+  .workspace-main .manager-dashboard > div:nth-of-type(1) { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
 
   .workspace-main .dashboard-hero {
     padding: 19px 17px !important;
@@ -342,6 +478,24 @@ button { touch-action: manipulation; }
   .workspace-main table { display: block; width: 100%; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: nowrap; }
   .workspace-main .settings-grid { grid-template-columns: minmax(0, 1fr) !important; }
 
+  .holiday-calendar-page { gap: 13px !important; }
+  .holiday-calendar-page > form { order: 2; }
+  .holiday-calendar-page > .calendar-layout { order: 1; grid-template-columns: minmax(0, 1fr) !important; gap: 12px !important; }
+  .calendar-widget { padding: 13px !important; border-radius: 16px !important; box-shadow: 0 7px 22px rgba(15, 23, 42, .055); }
+  .calendar-title { gap: 7px; }
+  .calendar-title strong { font-size: 16px; }
+  .calendar-title select { max-width: 90px; }
+  .calendar-toolbar > button { width: 38px; height: 38px; min-height: 38px !important; padding: 4px !important; }
+  .calendar-weekdays { gap: 2px !important; font-size: 10px !important; }
+  .calendar-weekdays > div { padding: 4px 0 !important; }
+  .calendar-days { gap: 3px !important; }
+  .calendar-day { min-height: 39px; border-radius: 9px; font-size: 12px; }
+  .calendar-day .calendar-holiday-dot { bottom: 4px; width: 5px; height: 5px; }
+  .holiday-agenda { gap: 8px; }
+  .holiday-agenda-heading { padding: 2px 2px 1px; }
+  .holiday-agenda-heading h2 { font-size: 16px !important; }
+  .holiday-row { gap: 10px; padding: 10px; }
+
   .workspace-main > main {
     width: 100% !important;
     max-width: 100% !important;
@@ -356,10 +510,18 @@ button { touch-action: manipulation; }
 
 @media (max-width: 390px) {
   .app-header .brand-copy { display: none; }
-  .workspace-main { padding: 10px !important; }
+  .workspace-main { padding: 12px 11px 102px !important; }
   .workspace-main .dashboard-hero-actions { grid-template-columns: minmax(0, 1fr); }
   .workspace-main .surface-card { padding: 12px !important; }
   .individual-shift-row { grid-template-columns: minmax(0, 1fr) !important; }
   .individual-shift-row > div:first-child,
   .individual-shift-row > div:last-child { grid-column: auto !important; }
+  .calendar-widget { padding: 10px !important; }
+  .calendar-day { min-height: 36px; }
+}
+
+@media (max-width: 480px) {
+  .staff-card-fields { grid-template-columns: minmax(0, 1fr); }
+  .staff-card-fields .staff-manager-field { grid-column: auto; }
+  .staff-access-toolbar > div strong { font-size: 13px !important; }
 }

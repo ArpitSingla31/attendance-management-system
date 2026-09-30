@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import ProfileAvatar from '../components/ProfileAvatar';
+import ExpandableList from '../components/ExpandableList';
 
 const categories = ['Annual leave', 'Sick leave', 'Personal leave', 'Unpaid leave', 'Compensatory time', 'Other'];
 const fieldStyle = { width: '100%', boxSizing: 'border-box', padding: '11px 12px', border: '1px solid #CBD5E1', borderRadius: 9, background: '#FFFFFF', color: '#0F172A', font: 'inherit' };
@@ -72,7 +73,7 @@ export default function LeaveCenter({ mode = 'employee' }) {
     </form>}
     <div style={{ display: 'grid', gap: 10 }}>
       <h2 style={{ margin: '2px 0', fontSize: 17, color: '#0F172A' }}>{canReview && mode === 'manager' ? 'Assigned to you' : 'My requests'}</h2>
-      {loading ? <p style={{ color: '#64748B' }}>Loading requests…</p> : requests.length === 0 ? <div style={{ ...cardStyle, color: '#64748B', fontSize: 14 }}>{canReview && mode === 'manager' ? 'No requests have been assigned to you.' : 'No leave requests yet.'}</div> : requests.map((request) => {
+      {loading ? <p style={{ color: '#64748B' }}>Loading requests…</p> : requests.length === 0 ? <div style={{ ...cardStyle, color: '#64748B', fontSize: 14 }}>{canReview && mode === 'manager' ? 'No requests have been assigned to you.' : 'No leave requests yet.'}</div> : <ExpandableList items={requests} renderItem={(request) => {
         const employee = request.employeeId || {};
         const approver = request.approverId || {};
         const statusColor = request.status === 'Approved' ? '#15803D' : request.status === 'Rejected' ? '#BE123C' : '#B45309';
@@ -88,7 +89,7 @@ export default function LeaveCenter({ mode = 'employee' }) {
           </div>
           {canReview && mode === 'manager' && request.status === 'Pending' && <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'end', gap: 7 }}><button disabled={Boolean(busyId)} onClick={() => decide(request, 'Approved')} style={{ border: 0, borderRadius: 8, background: '#DCFCE7', color: '#166534', padding: '8px 10px', fontWeight: 700, cursor: 'pointer' }}>Approve</button><button disabled={Boolean(busyId)} onClick={() => decide(request, 'Rejected')} style={{ border: 0, borderRadius: 8, background: '#FFE4E6', color: '#9F1239', padding: '8px 10px', fontWeight: 700, cursor: 'pointer' }}>Reject</button></div>}
         </article>;
-      })}
+      }} />}
     </div>
   </section>;
 }

@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useAuth } from '../context/AuthContext';
 import Logo from './Logo';
 import ProfileAvatar from './ProfileAvatar';
+import ExpandableList from './ExpandableList';
 import { haryanaHolidays2026 } from '../data/haryanaHolidays2026';
 import { useAttendanceStatus } from '../hooks/useAttendanceStatus';
 
@@ -64,7 +65,8 @@ export default function Header({ onNavigate, activeTab, isMobile, onToggleMenu }
       const today = new Date().toLocaleDateString('en-CA', { timeZone: holidayResult.value.timeZone || 'Asia/Kolkata' });
       const byNameAndDate = new Map(haryanaHolidays2026.map((holiday) => [`${holiday.name}-${holiday.date}`, holiday]));
       for (const holiday of holidayResult.value.holidays || []) byNameAndDate.set(`${holiday.name}-${holiday.date}`, holiday);
-      for (const holiday of [...byNameAndDate.values()].filter((entry) => entry.date >= today).sort((a, b) => a.date.localeCompare(b.date)).slice(0, 5)) {
+      const visibleMonth = today.slice(0, 7);
+      for (const holiday of [...byNameAndDate.values()].filter((entry) => entry.date >= today && entry.date.slice(0, 7) === visibleMonth).sort((a, b) => a.date.localeCompare(b.date)).slice(0, 5)) {
         items.push({ id: `holiday-${holiday._id || holiday.date}`, title: `Upcoming holiday: ${holiday.name}`, detail: holiday.date, date: holiday.date, tab: 'holiday-calendar' });
       }
     }
@@ -242,7 +244,7 @@ export default function Header({ onNavigate, activeTab, isMobile, onToggleMenu }
           </button>
           {notificationsOpen && <div style={{ position: 'absolute', right: 0, top: 46, width: 'min(360px, calc(100vw - 24px))', maxHeight: 'min(70vh, 520px)', overflowY: 'auto', zIndex: 50, background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 14, boxShadow: '0 16px 40px rgba(15,23,42,.18)' }}>
             <div style={{ padding: '13px 15px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #E2E8F0' }}><strong style={{ color: '#0F172A', fontSize: 14 }}>Notifications</strong><button onClick={loadNotifications} disabled={notificationsBusy} style={{ border: 0, background: 'none', color: '#4F46E5', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>{notificationsBusy ? 'Updating…' : 'Refresh'}</button></div>
-            {notificationsBusy && notifications.length === 0 ? <p style={{ padding: 14, margin: 0, color: '#64748B', fontSize: 13 }}>Loading notifications…</p> : notifications.length === 0 ? <p style={{ padding: 14, margin: 0, color: '#64748B', fontSize: 13 }}>You’re all caught up. New leave activity and upcoming holidays will appear here.</p> : notifications.map((item) => <button key={item.id} onClick={() => { setNotificationsOpen(false); onNavigate(item.tab); }} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, textAlign: 'left', padding: '12px 15px', border: 0, borderBottom: '1px solid #F1F5F9', background: '#FFFFFF', cursor: 'pointer' }}>{item.name && <ProfileAvatar person={item} size={32} />}<span><strong style={{ display: 'block', color: '#0F172A', fontSize: 13 }}>{item.title}</strong><span style={{ display: 'block', marginTop: 4, color: '#64748B', fontSize: 12 }}>{item.detail}</span></span></button>)}
+            {notificationsBusy && notifications.length === 0 ? <p style={{ padding: 14, margin: 0, color: '#64748B', fontSize: 13 }}>Loading notifications…</p> : notifications.length === 0 ? <p style={{ padding: 14, margin: 0, color: '#64748B', fontSize: 13 }}>You’re all caught up. New leave activity and upcoming holidays will appear here.</p> : <ExpandableList className="notification-items" items={notifications} renderItem={(item) => <button key={item.id} onClick={() => { setNotificationsOpen(false); onNavigate(item.tab); }} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, textAlign: 'left', padding: '12px 15px', border: 0, borderBottom: '1px solid #F1F5F9', background: '#FFFFFF', cursor: 'pointer' }}>{item.name && <ProfileAvatar person={item} size={32} />}<span><strong style={{ display: 'block', color: '#0F172A', fontSize: 13 }}>{item.title}</strong><span style={{ display: 'block', marginTop: 4, color: '#64748B', fontSize: 12 }}>{item.detail}</span></span></button>} />}
           </div>}
         </div>
 

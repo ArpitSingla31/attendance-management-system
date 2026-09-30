@@ -12,6 +12,10 @@ import ManagerDashboard from './pages/ManagerDashboard';
 import AttendanceCenter from './pages/AttendanceCenter';
 import EmployeeDashboard from './pages/EmployeeDashboard';
 import Settings from './pages/Settings';
+import { DashboardIcon, ClockIcon, ClipboardIcon, CheckSquareIcon, UsersIcon } from './components/Icons';
+
+const CalendarNavIcon = (props) => <svg width={props.size || 19} height={props.size || 19} viewBox="0 0 24 24" fill="none" stroke={props.color || 'currentColor'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg>;
+const MoreNavIcon = (props) => <svg width={props.size || 19} height={props.size || 19} viewBox="0 0 24 24" fill="none" stroke={props.color || 'currentColor'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg>;
 
 function MainApp() {
   const { currentUser, authReady } = useAuth();
@@ -95,6 +99,22 @@ function MainApp() {
     setCurrentTab(tab);
     if (isMobile) setMobileMenuOpen(false);
   };
+
+  const mobileNavItems = currentUser.role === 'Employee'
+    ? [
+        { label: 'Home', tab: 'dashboard', Icon: DashboardIcon },
+        { label: 'Attend', tab: 'attendance', Icon: ClockIcon },
+        { label: 'Leave', tab: 'apply-leave', Icon: ClipboardIcon },
+        { label: 'Calendar', tab: 'holiday-calendar', Icon: CalendarNavIcon },
+        { label: 'More', tab: 'more', Icon: MoreNavIcon }
+      ]
+    : [
+        { label: 'Home', tab: 'manager-dashboard', Icon: DashboardIcon },
+        { label: 'Approvals', tab: 'team-approvals', Icon: CheckSquareIcon },
+        { label: currentUser.role === 'Manager' ? 'Reports' : 'Staff', tab: currentUser.role === 'Manager' ? 'reports' : 'access-admin', Icon: currentUser.role === 'Manager' ? DashboardIcon : UsersIcon },
+        { label: 'Calendar', tab: 'holiday-calendar', Icon: CalendarNavIcon },
+        { label: 'More', tab: 'more', Icon: MoreNavIcon }
+      ];
 
   const renderContent = () => {
     // Universal Profile Tab
@@ -685,7 +705,7 @@ function MainApp() {
       <div className="workspace-body" style={{ display: 'flex', flex: 1, position: 'relative' }}>
         {/* Mobile Backdrop Overlay */}
         {isMobile && mobileMenuOpen && (
-          <div
+          <div className="mobile-menu-backdrop"
             onClick={() => setMobileMenuOpen(false)}
             style={{
               position: 'fixed',
@@ -698,7 +718,7 @@ function MainApp() {
         )}
 
         {/* Sidebar */}
-        <div style={{
+        <div className="mobile-sidebar-panel" style={{
           position: isMobile ? 'fixed' : 'sticky',
           top: isMobile ? 0 : 64,
           left: 0,
@@ -724,6 +744,16 @@ function MainApp() {
           {renderContent()}
         </main>
       </div>
+
+      {isMobile && <nav className="mobile-tabbar" aria-label="Main navigation">
+        {mobileNavItems.map(({ label, tab, Icon }) => {
+          const active = tab === 'more' ? mobileMenuOpen : currentTab === tab || (tab === 'employees' && ['employees', 'shifts'].includes(currentTab));
+          return <button key={tab} type="button" className={active ? 'mobile-tab active' : 'mobile-tab'} aria-current={active ? 'page' : undefined} onClick={() => tab === 'more' ? setMobileMenuOpen((open) => !open) : handleTabSelect(tab)}>
+            <Icon size={19} color={active ? '#4F46E5' : '#738096'} />
+            <span>{label}</span>
+          </button>;
+        })}
+      </nav>}
 
       {/* Onboard / Add Member Modal */}
       {showAddMemberModal && (
